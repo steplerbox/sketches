@@ -39,8 +39,8 @@ class Sketches extends Component {
             <div>Please select a sketch.</div>
             <ul>
               {sketches.map(sketch => (
-                <li key={sketch.id}>
-                  <Link to={`${match.path}/${sketch.id}`}>{sketch.name}</Link>
+                <li key={sketch._id}>
+                  <Link to={`${match.path}/${sketch._id}`}>{sketch.name}</Link>
                 </li>
               ))}
             </ul>

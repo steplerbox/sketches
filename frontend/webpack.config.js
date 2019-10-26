@@ -19,6 +19,12 @@ module.exports = {
     stats: {
       colors: true,
       chunks: false
+    },
+    proxy: {
+      '/api/**': {
+        target: 'http://[::1]:3000',
+        changeOrigin: true
+      }
     }
   },
   module: {
