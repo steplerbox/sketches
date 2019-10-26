@@ -5,8 +5,8 @@ import {Vector} from './Vector';
 import {Point} from "./Point";
 import {Constraint} from "./Constraint";
 
-const parseSketch = ({data}) => {
-  const points = data.points.map(pointData => {
+const parseSketch = sketch => {
+  const points = sketch.points.map(pointData => {
     const point = new Point(pointData);
 
     if (pointData.force) {
@@ -18,7 +18,7 @@ const parseSketch = ({data}) => {
 
   return {
     points,
-    constraints: data.constraints.map(constraint => {
+    constraints: sketch.constraints.map(constraint => {
       const p1 = points.find(point => point.id === constraint.p1);
       const p2 = points.find(point => point.id === constraint.p2);
 
