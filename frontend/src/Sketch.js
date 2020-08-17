@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 
 import {withRouter} from 'react-router-dom';
 
-import {Kinematics} from './kinematics/Kinematics';
+import {Canvas} from './Canvas';
 import {getSketch} from './api/sketches';
 
 export class Sketch extends Component {
@@ -30,7 +30,7 @@ export class Sketch extends Component {
     }
 
     return (
-      <Kinematics sketch={sketch} />
+      <Canvas sketch={sketch}/>
     );
   }
 }

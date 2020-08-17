@@ -4,7 +4,7 @@ const Joigoose = require('joigoose')(Mongoose);
 
 const joiSketchSchema = Joi.object({
   name: Joi.string().required(),
-  points: Joi.array().items({
+  nodes: Joi.array().items({
     id: Joi.string().required(),
     x: Joi.number().required(),
     y: Joi.number().required(),
@@ -15,8 +15,8 @@ const joiSketchSchema = Joi.object({
     })
   }),
   constraints: Joi.array().items({
-    p1: Joi.string().required(),
-    p2: Joi.string().required()
+    n1: Joi.string().required(),
+    n2: Joi.string().required()
   })
 });
 
