@@ -1,3 +1,7 @@
+import { Node } from './Node'
+import { uuid } from '../utils'
+import { Constraint } from './Constraint'
+
 export class Kinematics {
   constructor(params, initialData) {
     this.constraints = initialData.constraints || []
@@ -21,5 +25,22 @@ export class Kinematics {
 
       this.constraints.forEach(constraint => constraint.resolve())
     }
+  }
+
+  addNode = ({ x, y, fixed }) => {
+    const node = new Node({ id: uuid(), x, y, fixed })
+    this.nodes.push(node)
+    return node
+  }
+
+  removeNode = node => {
+    this.constraints = this.constraints.filter(c => (c.n1.id !== node.id && c.n2.id !== node.id))
+    this.nodes = this.nodes.filter(n => n.id !== node.id)
+  }
+
+  addConstraint = (n1, n2) => {
+    const constraint = new Constraint(n1, n2)
+    this.constraints.push(constraint)
+    return constraint
   }
 }
