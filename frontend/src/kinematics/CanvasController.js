@@ -36,7 +36,7 @@ export class CanvasController {
     this.nodeSize = nodeSize || 3
     this.showStress = showStress || false
     this.mouse = new Vector()
-    this.edit = false
+    this.play = false
 
     this.kinematics = new Kinematics({
       width: this.canvas.width,
@@ -45,7 +45,7 @@ export class CanvasController {
     }, parseSketch(sketch))
 
     const loop = () => {
-      if (!this.edit) {
+      if (this.play) {
         this.kinematics.update(16)
       }
       this.render()
@@ -67,8 +67,8 @@ export class CanvasController {
   }
 
   updateProps = props => {
-    if (props.edit !== this.edit) {
-      this.setEdit(props.edit)
+    if (props.play !== this.play) {
+      this.setPlayback(props.play)
     }
 
     if (props.gravity !== this.kinematics.gravity) {
@@ -76,8 +76,8 @@ export class CanvasController {
     }
   }
 
-  setEdit = edit => {
-    this.edit = edit
+  setPlayback = play => {
+    this.play = play
   }
 
   render = () => {

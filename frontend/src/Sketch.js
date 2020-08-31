@@ -10,10 +10,10 @@ export class Sketch extends Component {
   state = {
     isLoading: true,
     sketch: undefined,
-    edit: false,
+    play: false,
     showStress: true,
     nodeSize: 3,
-    gravity: new Vector(0, -0.98)
+    gravity: new Vector(0, 0.98)
   }
   const
 
@@ -28,8 +28,8 @@ export class Sketch extends Component {
     })
   }
 
-  handleEditModeChange = () => {
-    this.setState({ edit: !this.state.edit })
+  handleTogglePlayback = () => {
+    this.setState({ play: !this.state.play })
   }
 
   handleGravityXChange = e => {
@@ -50,8 +50,7 @@ export class Sketch extends Component {
     return (
       <>
         <div>
-          <input type='checkbox' name='edit' checked={this.state.edit} onChange={this.handleEditModeChange}/>
-          <label htmlFor='edit'>Edit</label>
+          <button name='edit' onClick={this.handleTogglePlayback}>{this.state.play ? 'stop' : 'play'}</button>
         </div>
         <div>
           <label htmlFor='gX'>Gravity X</label>
@@ -61,7 +60,7 @@ export class Sketch extends Component {
         </div>
         <Canvas
           sketch={sketch}
-          edit={this.state.edit}
+          play={this.state.play}
           nodeSize={this.state.nodeSize}
           showStress={this.state.showStress}
           gravity={this.state.gravity}

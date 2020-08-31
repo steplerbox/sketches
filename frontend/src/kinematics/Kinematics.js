@@ -43,4 +43,8 @@ export class Kinematics {
     this.constraints.push(constraint)
     return constraint
   }
+
+  removeConstraint = constraint => {
+    this.constraints = this.constraints.filter(c => c.id !== constraint.id)
+  }
 }
