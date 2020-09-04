@@ -13,7 +13,8 @@ export class Sketch extends Component {
     play: false,
     showStress: true,
     nodeSize: 3,
-    gravity: new Vector(0, 0.98)
+    gravity: new Vector(0, 0.98),
+    tool: 'add'
   }
   const
 
@@ -40,6 +41,14 @@ export class Sketch extends Component {
     this.setState({ gravity: new Vector(this.state.gravity.x, Number(e.target.value)) })
   }
 
+  handleAddNode = () => {
+    this.setState({ tool: 'add' })
+  }
+
+  handleRemoveNode = () => {
+    this.setState({ tool: 'remove' })
+  }
+
   render() {
     const { isLoading, sketch } = this.state
 
@@ -50,13 +59,15 @@ export class Sketch extends Component {
     return (
       <>
         <div>
-          <button name='edit' onClick={this.handleTogglePlayback}>{this.state.play ? 'stop' : 'play'}</button>
-        </div>
-        <div>
           <label htmlFor='gX'>Gravity X</label>
           <input type='number' name='gX' value={this.state.gravity.x} onChange={this.handleGravityXChange}/>
           <label htmlFor='gY'>Gravity Y</label>
           <input type='number' name='gY' value={this.state.gravity.y} onChange={this.handleGravityYChange}/>
+        </div>
+        <div>
+          <button onClick={this.handleTogglePlayback}>{this.state.play ? 'stop' : 'play'}</button>
+          <button onClick={this.handleAddNode}>add node</button>
+          <button onClick={this.handleRemoveNode}>remove node</button>
         </div>
         <Canvas
           sketch={sketch}

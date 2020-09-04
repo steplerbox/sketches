@@ -10,12 +10,32 @@ export class Canvas extends Component {
       canvas: this.canvasRef.current,
       ...this.props
     })
-
-    this.canvasRef.current.addEventListener('mousemove', this.canvasController.updateMousePosition)
   }
 
   componentWillUnmount() {
     this.canvasController.dispose()
+  }
+
+  handleMouseClick = e => {
+    const rect = this.canvasRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    if (!this.props.play) {
+      this.canvasController.select(x, y)
+    }
+  }
+
+  handleMouseMove = e => {
+    const rect = this.canvasRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    this.canvasController.updateMousePosition(x, y)
+  }
+
+  handleContextMenu = e => {
+    e.preventDefault()
   }
 
   render() {
@@ -29,6 +49,9 @@ export class Canvas extends Component {
         ref={this.canvasRef}
         width={1000}
         height={800}
+        onMouseMove={this.handleMouseMove}
+        onMouseDown={this.handleMouseClick}
+        onContextMenu={this.handleContextMenu}
       />
     )
   }

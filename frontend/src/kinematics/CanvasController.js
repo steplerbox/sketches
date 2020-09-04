@@ -1,33 +1,5 @@
-import { Kinematics } from './Kinematics'
+import { Kinematics, parseSketch } from './Kinematics'
 import { Vector } from './Vector'
-import { Node } from './Node'
-import { Constraint } from './Constraint'
-
-const parseSketch = sketch => {
-  const nodes = sketch.nodes.map(nodeData => {
-    const node = new Node(nodeData)
-
-    if (nodeData.force) {
-      node.addForce(new Vector(nodeData.force.x, nodeData.force.y))
-    }
-
-    return node
-  })
-
-  return {
-    nodes,
-    constraints: sketch.constraints.map(constraint => {
-      const n1 = nodes.find(node => node.id === constraint.n1)
-      const n2 = nodes.find(node => node.id === constraint.n2)
-
-      if (!n1 || !n2) {
-        console.error('node not found')
-      }
-
-      return new Constraint(n1, n2)
-    })
-  }
-}
 
 export class CanvasController {
   constructor({ sketch, canvas, nodeSize, showStress, gravity }) {
@@ -44,31 +16,53 @@ export class CanvasController {
       gravity: gravity
     }, parseSketch(sketch))
 
-    const loop = () => {
-      if (this.play) {
-        this.kinematics.update(16)
-      }
-      this.render()
-      this.requestId = window.requestAnimationFrame(loop)
-    }
+    this.draw()
+    this.loop()
+  }
 
-    loop()
+  loop = () => {
+    if (this.play) {
+      this.kinematics.update(16)
+    }
+    this.draw()
+    this.requestId = window.requestAnimationFrame(this.loop)
   }
 
   dispose = () => {
     window.cancelAnimationFrame(this.requestId)
   }
 
-  updateMousePosition = e => {
-    const rect = this.canvas.getBoundingClientRect()
+  addNode = (x, y) => {
+    this.kinematics.addNode({ x, y })
+  }
 
-    this.mouse.x = e.clientX - rect.left
-    this.mouse.y = e.clientY - rect.top
+  removeNode = (x, y) => {
+    const node = this.getClosestNode(x, y)
+    if (node) {
+      this.kinematics.removeNode(node)
+    }
+  }
+
+  dragNode = (x, y) => {
+
+  }
+
+  select = (x, y) => {
+
+  }
+
+  updateMousePosition = (x, y) => {
+    this.mouse.x = x
+    this.mouse.y = y
+  }
+
+  getClosestNode = () => {
+    return this.kinematics.nodes.find(node => node.pos.distance(this.mouse) < 10)
   }
 
   updateProps = props => {
     if (props.play !== this.play) {
-      this.setPlayback(props.play)
+      this.play = props.play
     }
 
     if (props.gravity !== this.kinematics.gravity) {
@@ -76,11 +70,7 @@ export class CanvasController {
     }
   }
 
-  setPlayback = play => {
-    this.play = play
-  }
-
-  render = () => {
+  draw = () => {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
     this.drawBackground()
