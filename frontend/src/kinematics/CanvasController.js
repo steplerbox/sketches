@@ -1,23 +1,53 @@
-import { Kinematics, parseSketch } from './Kinematics'
+import { Kinematics, parseSketchData } from './Kinematics'
 import { Vector } from './Vector'
+import { Constraint } from './Constraint'
+import { Node } from './Node'
 
 export class CanvasController {
   constructor({ sketch, canvas, nodeSize, showStress, gravity }) {
     this.canvas = canvas
-    this.ctx = canvas.getContext('2d')
+    this.ctx = canvas ? canvas.getContext('2d') : undefined
     this.nodeSize = nodeSize || 3
     this.showStress = showStress || false
-    this.mouse = new Vector()
     this.play = false
+    this.mouse = new Vector()
+    this.selectedNode = null
+    this.isCreatingConstraint = false
 
     this.kinematics = new Kinematics({
-      width: this.canvas.width,
-      height: this.canvas.height,
+      width: canvas ? canvas.width : 0,
+      height: canvas ? canvas.height : 0,
       gravity: gravity
-    }, parseSketch(sketch))
+    }, parseSketchData(sketch))
 
     this.draw()
     this.loop()
+  }
+
+  get gravity() {
+    return this.kinematics.gravity
+  }
+
+  set gravity(gravity) {
+    this.kinematics.gravity = gravity
+  }
+
+  get sketchData() {
+    const nodes = this.kinematics.nodes.map(n => ({
+      id: n.id,
+      x: n.pos.x,
+      y: n.pos.y,
+      fixed: n.fixed,
+      force: { x: n.acc.x, y: n.acc.y }
+    }))
+
+    const constraints = this.kinematics.constraints.map(c => ({
+      n1: c.n1.id,
+      n2: c.n2.id,
+      id: c.id
+    }))
+
+    return { nodes, constraints }
   }
 
   loop = () => {
@@ -43,12 +73,31 @@ export class CanvasController {
     }
   }
 
+  toggleNodeFix = (x, y) => {
+    const node = this.getClosestNode(x, y)
+    if (node) {
+      this.kinematics.toggleNodeFix(node)
+    }
+  }
+
+  selectNode = (x, y) => {
+    this.selectedNode = this.getClosestNode(x, y)
+  }
+
   dragNode = (x, y) => {
 
   }
 
-  select = (x, y) => {
-
+  addConstraint = (x, y) => {
+    if (!this.isCreatingConstraint) {
+      this.isCreatingConstraint = true
+      this.selectedNode = this.getClosestNode(x, y) || this.kinematics.addNode({ x, y })
+    } else {
+      const endNode = this.getClosestNode(x, y) || this.kinematics.addNode({ x, y })
+      this.kinematics.addConstraint(this.selectedNode, endNode)
+      this.selectedNode = null
+      this.isCreatingConstraint = false
+    }
   }
 
   updateMousePosition = (x, y) => {
@@ -60,16 +109,6 @@ export class CanvasController {
     return this.kinematics.nodes.find(node => node.pos.distance(this.mouse) < 10)
   }
 
-  updateProps = props => {
-    if (props.play !== this.play) {
-      this.play = props.play
-    }
-
-    if (props.gravity !== this.kinematics.gravity) {
-      this.kinematics.gravity = props.gravity
-    }
-  }
-
   draw = () => {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
@@ -77,6 +116,10 @@ export class CanvasController {
 
     this.kinematics.constraints.forEach(constraint => this.drawConstraint(constraint))
     this.kinematics.nodes.forEach(node => this.drawNode(node))
+
+    if (this.isCreatingConstraint) {
+      this.drawConstraint(new Constraint(this.selectedNode, new Node(this.mouse)))
+    }
   }
 
   drawBackground = () => {
@@ -108,6 +151,13 @@ export class CanvasController {
       this.ctx.beginPath()
       this.ctx.arc(node.pos.x, node.pos.y, this.nodeSize * 3, 0, Math.PI * 2, false)
       this.ctx.fill()
+    }
+
+    if (node.id === this.selectedNode?.id) {
+      this.ctx.strokeStyle = 'rgba(255,0,0,0.5)'
+      this.ctx.beginPath()
+      this.ctx.arc(node.pos.x, node.pos.y, this.nodeSize * 3, 0, Math.PI * 2, false)
+      this.ctx.stroke()
     }
 
     this.ctx.fillStyle = node.fixed ? '#EDEA26' : '#AAAAAA'

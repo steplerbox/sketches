@@ -1,5 +1,5 @@
-const path = require('path');
-const HtmlWebPackPlugin = require('html-webpack-plugin');
+const path = require('path')
+const HtmlWebPackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: {
@@ -37,7 +37,9 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/preset-react'],
             plugins: [
-              ['@babel/plugin-proposal-class-properties', { 'loose': true }]
+              ['@babel/plugin-proposal-class-properties', { 'loose': true }],
+              ['@babel/plugin-proposal-optional-chaining'],
+              ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }]
             ]
           }
         }
@@ -50,7 +52,7 @@ module.exports = {
           }
         ]
       }
-    ],
+    ]
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json']
@@ -61,4 +63,4 @@ module.exports = {
       filename: './index.html'
     })
   ]
-};
+}

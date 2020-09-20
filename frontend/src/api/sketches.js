@@ -1,28 +1,31 @@
-export const getSketches = () => {
-  return Promise.resolve([
-    { id: 1, name: 'test 1' },
-    { id: 2, name: 'test 2' }
-  ])
+import axios from 'axios'
 
-  // return axios('/api/sketches').then(response => {
-  //   return response.data;
-  // });
+export const getSketches = () => {
+  return axios('/api/sketches').then(response => {
+    return response.data
+  })
 }
 
 export const getSketch = sketchId => {
-  return Promise.resolve({
-    id: 1,
-    name: 'test 1',
-    nodes: [
-      { id: 1, x: 500, y: 500, fixed: true },
-      { id: 2, x: 600, y: 600 }
-    ],
-    constraints: [
-      { id: 1, n1: 1, n2: 2 }
-    ]
+  return axios(`/api/sketches/${sketchId}`).then(response => {
+    return response.data
   })
+}
 
-  // return axios(`/api/sketches/${sketchId}`).then(response => {
-  //   return response.data;
-  // });
+export const createSketch = sketchData => {
+  return axios.post(`/api/sketches`, sketchData).then(response => {
+    return response.data
+  })
+}
+
+export const updateSketch = sketchData => {
+  return axios.put(`/api/sketches/${sketchData.id}`, { ...sketchData, id: undefined }).then(response => {
+    return response.data
+  })
+}
+
+export const deleteSketch = sketchId => {
+  return axios.delete(`/api/sketches/${sketchId}`).then(response => {
+    return response.data
+  })
 }

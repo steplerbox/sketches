@@ -8,7 +8,11 @@ export class Node {
     this.acc = new Vector()
 
     this.fixed = fixed
-  };
+  }
+
+  toggleFix = () => {
+    this.fixed = !this.fixed
+  }
 
   move = v => {
     if (this.fixed) {

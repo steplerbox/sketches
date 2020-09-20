@@ -1,14 +1,14 @@
-import React, {Component} from 'react';
-
+import React, { Component } from 'react'
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Link
-} from 'react-router-dom';
+} from 'react-router-dom'
 
-import {Home} from './Home';
-import {SketchesRoute} from './Sketches';
+import { Home } from './routes/Home'
+import { SketchesRoute } from './routes/Sketches'
+import { SketchRoute } from './routes/Sketch'
 
 export class App extends Component {
   render() {
@@ -27,15 +27,18 @@ export class App extends Component {
           </nav>
 
           <Switch>
-            <Route path='/sketches'>
-              <SketchesRoute />
+            <Route exact path='/'>
+              <Home/>
             </Route>
-            <Route path='/'>
-              <Home />
+            <Route exact path='/sketches'>
+              <SketchesRoute/>
+            </Route>
+            <Route path='/sketches/:sketchId'>
+              <SketchRoute/>
             </Route>
           </Switch>
         </div>
       </Router>
-    );
+    )
   }
 }
