@@ -3,7 +3,7 @@ backend:
 - install mongoDB globally
 - run `npm i`
 - run `mongod`
-- run `npm start`.
+- run `nodemon`.
 
 frontend:
 - run `npm i`
